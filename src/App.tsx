@@ -1,58 +1,36 @@
-import { useEffect, useState } from 'react';
+import { BrowserRouter, NavLink, Route } from 'react-router-dom';
 import Card, { CardVariant } from './components/Card';
-import UserList from './components/UserList';
-import { ITodo, IUser } from './types/types';
-import axios from 'axios';
-import List from './components/List';
-import UserItem from './components/UserItem';
-import TodoItem from './components/TodoItem';
 import EventsExample from './components/ExentsExample'
+import UserPage from './components/UserPage';
+import TodosPage from './components/TodosPage';
+import UserItemPage from './components/UserItemPage';
+import TodoItem from './components/TodoItem';
+import TodosItemPage from './components/TodosItemPage';
 
 
 const App = () => {
-  const [users, setUsers] = useState<IUser[]>([])
-  const [todos, setTodos] = useState<ITodo[]>([])
-
-  useEffect(() => {
-    fectUsers()
-    fectTodos()
-  }, [])
-
-  async function fectUsers() {
-    try {
-      const response = await axios.get<IUser[]>('https://jsonplaceholder.typicode.com/users')
-      setUsers(response.data)
-    } catch (e) {
-      alert(e)
-    }
-  }
-
-  async function fectTodos() {
-    try {
-      const response = await axios.get<ITodo[]>('https://jsonplaceholder.typicode.com/todos?_limit=10')
-      setTodos(response.data)
-    } catch (e) {
-      alert(e)
-    }
-  }
-
   return (
     <div>
-      <EventsExample></EventsExample>
-      <Card
-        variant={CardVariant.outlined}
-        height={'200px'}
-        width={'300px'}>
-        <button>Кнопка</button>
-      </Card>
-      <List
-        items={users}
-        renderItem={(user:IUser) => <UserItem user={user} key={user.id}/>}
-      />
-      <List
-        items={todos}
-        renderItem={(todo:ITodo) => <TodoItem todo={todo} key={todo.id}/>}
-      />
+      <BrowserRouter>
+        <div>
+          <div style={{marginBottom: 50, display: 'flex', gap: 20}}>
+            <NavLink to='/users'>Пользователи</NavLink>
+            <NavLink to='/todos'>Список дел</NavLink>
+          </div>
+          <Route path={'/users'} exact>
+            <UserPage/>
+          </Route>
+          <Route path={'/todos'} exact>
+            <TodosPage/>
+          </Route>
+          <Route path={'/users/:id'}>
+            <UserItemPage/>
+          </Route>
+          <Route path={'/todos/:id'}>
+            <TodosItemPage/>
+          </Route>
+        </div>
+      </BrowserRouter>
     </div>
   );
 };
